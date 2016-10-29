@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+# require gems in Gemfile
+require "bundler/setup"
+Bundler.require
+
+# start AR connection
+require "logger"
+ActiveRecord::Base.configurations = YAML.load_file("db/config.yml")
+ActiveRecord::Base.establish_connection(:development)
+ActiveRecord::Base.logger = Logger.new(STDOUT)
+
+# start IRB
+require "irb"
+require "irb/completion"
+IRB.start

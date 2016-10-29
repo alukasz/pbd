@@ -1,0 +1,7 @@
+development:
+  adapter: mysql2
+  encoding: utf8
+  database: pbd
+  pool: 5
+  username: root
+  password: 
