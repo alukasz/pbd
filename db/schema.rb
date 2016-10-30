@@ -32,19 +32,6 @@ CREATE TABLE `ar_internal_metadata` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `conference_topic`
---
-
-DROP TABLE IF EXISTS `conference_topic`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `conference_topic` (
-  `conference_id` int(11) NOT NULL,
-  `topic_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `conferences`
 --
 
@@ -62,6 +49,19 @@ CREATE TABLE `conferences` (
   `registration_end_date` datetime DEFAULT NULL,
   `ticket_limit` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `conferences_topics`
+--
+
+DROP TABLE IF EXISTS `conferences_topics`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `conferences_topics` (
+  `conference_id` int(11) NOT NULL,
+  `topic_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -238,19 +238,6 @@ CREATE TABLE `sponsorships` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `talk_users`
---
-
-DROP TABLE IF EXISTS `talk_users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `talk_users` (
-  `talk_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `talks`
 --
 
@@ -276,6 +263,19 @@ CREATE TABLE `talks` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `talks_users`
+--
+
+DROP TABLE IF EXISTS `talks_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `talks_users` (
+  `talk_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `tickets`
 --
 
@@ -294,19 +294,6 @@ CREATE TABLE `tickets` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `topic_users`
---
-
-DROP TABLE IF EXISTS `topic_users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `topic_users` (
-  `topic_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `topics`
 --
 
@@ -321,6 +308,19 @@ CREATE TABLE `topics` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `topics_users`
+--
+
+DROP TABLE IF EXISTS `topics_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `topics_users` (
+  `topic_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `users`
 --
 
@@ -331,7 +331,7 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `firstname` varchar(50) NOT NULL,
   `lastname` varchar(50) NOT NULL,
-  `email` varchar(50) NOT NULL,
+  `email` varchar(60) NOT NULL,
   `password` varchar(255) NOT NULL,
   `password_reset_token` varchar(255) DEFAULT NULL,
   `password_reset_sent_at` datetime DEFAULT NULL,
@@ -385,7 +385,7 @@ CREATE TABLE `venues` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-10-30 18:43:53
+-- Dump completed on 2016-10-30 19:40:50
 INSERT INTO schema_migrations (version) VALUES ('20161029201834');
 
 

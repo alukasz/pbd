@@ -261,3 +261,73 @@ Ticket.import tickets, validates: false
 Registration.import registrations, validates: false
 puts "Inserted #{tickets.size} Tickets."
 puts "Inserted #{registrations.size} Registrations."
+
+# seed join tables
+roles_users = []
+roles_users_columns = [:role_id, :user_id]
+(ROLES * USERS / 3.1415).round.times do
+  roles_users << [
+    number_between(1, ROLES),
+    number_between(1, USERS)
+  ]
+end
+roles_users_uniq = roles_users.uniq
+RoleUser.import roles_users_columns, roles_users_uniq, validate: false
+puts "Inserted #{roles_users_uniq.size} RoleUser."
+
+talks_users = []
+talks_users_columns = [:talk_id, :user_id]
+TALKS.times do
+  n = number_between(1, TALKS)
+  talks_users << [
+    n,
+    number_between(1, USERS)
+  ]
+  if low_chance # low chance that talk has multiple presenters
+    number_between(1, 4).times do
+      talks_users << [
+        n,
+        number_between(1, USERS)
+      ]
+    end
+  end
+end
+talks_users_uniq = talks_users.uniq
+TalkUser.import talks_users_columns, talks_users_uniq, validate: false
+puts "Inserted #{talks_users_uniq.size} TalkUser."
+
+topics_users = []
+topics_users_columns = [:topic_id, :user_id]
+USERS.times do |user|
+  if low_chance # low chance that user is an expert on some topic
+    topics_users << [
+      number_between(1, TOPICS),
+      user + 1
+    ]
+    if normal_chance # but normal chance that is expert on some other(s) topics
+      number_between(1, 4).times do
+        topics_users << [
+          number_between(1, TOPICS),
+          user + 1
+        ]
+      end
+    end
+  end
+end
+topics_users_uniq = topics_users.uniq
+TopicUser.import topics_users_columns, topics_users_uniq, validate: false
+puts "Inserted #{topics_users_uniq.size} TopicUser."
+
+conferences_topics = []
+conferences_topics_columns = [:conference_id, :topic_id]
+CONFERENCES.times do |conference|
+  number_between(1, (TOPICS/2).round).times do |topic|
+    conferences_topics << [
+      conference + 1,
+      topic + 1
+    ]
+  end
+end
+conferences_topics_uniq = conferences_topics.uniq
+ConferenceTopic.import conferences_topics_columns, conferences_topics_uniq, validate: false
+puts "Inserted #{conferences_topics_uniq.size} ConferenceTopic."

@@ -7,7 +7,7 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
     create_table :users do |t|
       t.string :firstname, limit: 50, null: false
       t.string :lastname, limit: 50, null: false
-      t.string :email, limit: 50, null: false
+      t.string :email, limit: 60, null: false
       t.string :password, null: false
       t.string :password_reset_token, limit: 255
       t.datetime :password_reset_sent_at
@@ -134,8 +134,8 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
     end
 
     create_join_table :roles, :users
-    create_join_table :talk, :users
-    create_join_table :topic, :users
-    create_join_table :conference, :topic
+    create_join_table :talks, :users
+    create_join_table :topics, :users
+    create_join_table :conferences, :topics
   end
 end
