@@ -2,7 +2,7 @@ require "faker"
 require "as-duration"
 require_relative "../lib/pbd"
 
-CONFERENCES = 1
+CONFERENCES = 10
 USERS = CONFERENCES * 100
 VENUES = CONFERENCES * 2
 ROOMS = VENUES * 3
