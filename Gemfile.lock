@@ -26,6 +26,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (7.1.4)
+    as-duration (0.1.1)
     builder (3.2.2)
     concurrent-ruby (1.0.2)
     erubis (2.7.0)
@@ -70,10 +71,11 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  as-duration
   faker
   mysql2
   require_all
   standalone_migrations
 
 BUNDLED WITH
-   1.13.5
+   1.13.6
