@@ -6,37 +6,42 @@ require_relative "../lib/pbd"
 ActiveRecord::Import.require_adapter("mysql2")
 ActiveRecord::Base.logger = nil
 
-CONFERENCES = 10
-USERS = CONFERENCES * 100
-VENUES = CONFERENCES * 2
-ROOMS = VENUES * 3
-SPONSORS = CONFERENCES * 3
-SPONSORSHIPS = (SPONSORS + CONFERENCES) * 2
-#SCHEDULES = CONFERENCES * 1-5;
-#TALKS = CONFERENCES * 3-10;
-TOPICS = 42
-REVIEWS = CONFERENCES * 20
+def number_between(from, to)
+  rand(from..to)
+end
+
+CONFERENCES = 555
+USERS = CONFERENCES * number_between(40, 60) + number_between(1, 100)
+ROLES = 5
+VENUES = CONFERENCES / number_between(10, 25) + number_between(1, 20)
+ROOMS = VENUES * number_between(2, 6) + number_between(2, 6)
+SPONSORS = CONFERENCES * number_between(2, 4) + number_between(1, 10)
+SPONSORSHIPS = number_between((SPONSORS + CONFERENCES) * 2, (SPONSORS + CONFERENCES) * 3)
+MAX_SCHEDULES = 5
+MIN_TALKS_DAILY = 1
+MAX_TALKS_DAILY = 8
+TOPICS = number_between(30, 40)
+REVIEWS = number_between(CONFERENCES * 42, CONFERENCES * 84)
 
 # helper methods
-
-def boolean(true_ratio = 0.5)
-  Faker::Boolean.boolean(true_ratio)
+def high_chance(expression = true, other = nil)
+  rand < 0.8 ? expression : other
 end
 
-def high_chance(value = true)
-  boolean(0.8) ? value : nil
+def low_chance(expression = true, other = nil)
+  rand < 0.2 ? expression : other
 end
 
-def low_chance(value = true)
-  boolean(0.2) ? value : nil
+def normal_chance(expression = true, other = nil)
+  rand < 0.5 ? expression : other
 end
 
-def normal_chance(value = true)
-  boolean ? value : nil
+def very_high_chance(expression = true, other = nil)
+  rand < 0.95 ? expression : other
 end
 
 def id(number)
-  Faker::Number.between(1, number)
+  number_between(1, number)
 end
 
 def currency
@@ -49,45 +54,53 @@ end
 
 users = []
 USERS.times do |i|
-  nickname = Faker::Internet.user_name + i.to_s
-
   users << User.new(
     firstname: Faker::Name.first_name,
     lastname: Faker::Name.last_name,
-    email: Faker::Internet.email,
+    email: Faker::Internet.email + i.to_s,
     password: Faker::Lorem.characters(60),
     confirmation_token: Faker::Lorem.characters(60),
     confirmed_at: Faker::Date.between(3.years.ago, Date.today),
-    bio: Faker::Hipster.paragraphs.join(" "),
-    nickname: nickname,
+    bio: Faker::Hipster.paragraph,
+    nickname: Faker::Internet.user_name,
     affiliation: Faker::Company.name,
     phone: Faker::PhoneNumber.phone_number,
-    avatar: "images/avatar/#{nickname}.jpg",
+    avatar: "images/avatar/user-#{i}.jpg",
     email_public: high_chance,
     phone_public: low_chance
   )
 end
 User.import users, validates: false
+puts "Inserted #{users.size} Users."
+
+roles = []
+ROLES.times do |i|
+  roles << Role.new(
+    name: Faker::Superhero.power,
+    description: Faker::Hipster.sentence
+  )
+end
+Role.import roles, validates: false
+puts "Inserted #{roles.size} Roles."
 
 conferences = []
 CONFERENCES.times do |i|
-  nickname = Faker::Internet.user_name + i.to_s
-  start_date = Faker::Date.between(3.years.ago, 2.years.from_now)
-  registration = high_chance
-  registration_start_date = start_date - Faker::Number.between(20, 50) if registration
+  start_date = Faker::Date.between(3.years.ago, 1.years.from_now)
+  registration_start_date = high_chance(start_date - number_between(20, 50))
 
   conferences << Conference.new(
     title: Faker::Company.catch_phrase,
-    description: Faker::Hipster.paragraphs.join(" "),
-    logo: high_chance("images/avatar/#{nickname}.jpg"),
+    description: Faker::Hipster.paragraph,
+    logo: high_chance("images/conferences/conference-#{i}jpg"),
     start_date: start_date,
-    end_date: start_date + Faker::Number.between(1, 15),
-    registration_start_date: registration ? registration_start_date : nil,
-    registration_end_date: registration ? registration_start_date + Faker::Number.between(1, 20) : nil,
-    ticket_limit: Faker::Number.between(100, 10000)
+    end_date: start_date + number_between(1, 15),
+    registration_start_date: registration_start_date,
+    registration_end_date: registration_start_date ? registration_start_date + number_between(1, 20) : nil,
+    ticket_limit: very_high_chance(number_between(50, 200), number_between(200, 10_000))
   )
 end
 Conference.import conferences, validates: false
+puts "Inserted #{conferences.size} Conferences."
 
 # FIX find appropriate name for topic
 topics = []
@@ -97,6 +110,7 @@ TOPICS.times do |i|
   )
 end
 Topic.import topics, validates: false
+puts "Inserted #{topics.size} Topics."
 
 venues = []
 VENUES.times do |i|
@@ -105,7 +119,7 @@ VENUES.times do |i|
   venues << Venue.new(
     name: Faker::Lorem.word,
     website: high_chance(Faker::Internet.url),
-    description: high_chance(Faker::Hipster.paragraphs.join(" ")),
+    description: high_chance(Faker::Hipster.paragraph),
     country: Faker::Address.country_code,
     city: Faker::Address.city,
     street: Faker::Address.street_name,
@@ -116,45 +130,49 @@ VENUES.times do |i|
   )
 end
 Venue.import venues, validates: false
+puts "Inserted #{venues.size} Venues."
 
 rooms = []
 ROOMS.times do |i|
   rooms << Room.new(
     number: Faker::Address.building_number,
-    size: Faker::Number.between(50, 5000),
+    size: number_between(50, 5000),
     venue_id: id(VENUES)
   )
 end
 Room.import rooms, validates: false
+puts "Inserted #{rooms.size} Rooms."
 
 sponsors = []
 SPONSORS.times do |i|
   sponsors << Sponsor.new(
     name: Faker::Company.name,
-    description: high_chance(Faker::Hipster.paragraphs.join(" ")),
+    description: high_chance(Faker::Hipster.paragraph),
     website: high_chance(Faker::Internet.domain_name),
     logo: high_chance("images/sponsors/sponsor-#{i}.jpg")
   )
 end
 Sponsor.import sponsors, validates: false
+puts "Inserted #{sponsors.size} Sponsors."
 
 # FIX sponsor can support the same conference multiple times
 sponsorships = []
 SPONSORSHIPS.times do |i|
   sponsorships << Sponsorship.new(
-    amount: Faker::Number.between(1000, 1_000_000),
+    amount: number_between(10_000, 100_000_000),
     currency: currency,
     sponsor_id: id(SPONSORS),
     conference_id: id(CONFERENCES)
   )
 end
 Sponsorship.import sponsorships, validates: false
+puts "Inserted #{sponsorships.size} Sponsorships."
 
 # schedule days for conference and talks for schedule day
 schedule_days = []
 talks = []
 Conference.all.each do |conference|
-  Faker::Number.between(1, 5).times do |day|
+  number_between(1, MAX_SCHEDULES).times do |day|
     schedule_day = ScheduleDay.new(
       public: high_chance ? true : false,
       day: conference.start_date + day,
@@ -162,10 +180,10 @@ Conference.all.each do |conference|
     )
     schedule_days << schedule_day
 
-    Faker::Number.between(3,10).times do
+    number_between(MIN_TALKS_DAILY, MAX_TALKS_DAILY).times do
       talks << Talk.new(
         title: Faker::Educator.course,
-        description: Faker::Hipster.paragraphs.join(" "),
+        description: Faker::Hipster.paragraph,
         slides: normal_chance(Faker::Internet.url),
         public: high_chance,
         highlighted: low_chance,
@@ -179,18 +197,21 @@ Conference.all.each do |conference|
 end
 ScheduleDay.import schedule_days, validates: false
 Talk.import talks, validates: false
+puts "Inserted #{schedule_days.size} ScheduleDays."
+puts "Inserted #{talks.size} Talks."
 
 TALKS = Talk.count
 reviews = []
 REVIEWS.times do |i|
   reviews << Review.new(
     title: Faker::Hacker.say_something_smart,
-    content: Faker::Hipster.paragraphs.join(" "),
+    content: Faker::Hipster.paragraph,
     talk_id: id(TALKS),
     user_id: id(USERS)
   )
 end
 Review.import reviews, validates: false
+puts "Inserted #{reviews.size} Reviews."
 
 registration_types_arr = []
 CONFERENCES.times do |i|
@@ -198,45 +219,45 @@ CONFERENCES.times do |i|
     listener = type == 'Listener'
     registration_types_arr << RegistrationType.new(
       name: type,
-      description: normal_chance(Faker::Lorem.paragraph),
+      description: normal_chance(Faker::Hipster.sentence),
       requires_ticket: listener,
-      amount: listener ? Faker::Number.between(10000, 2_000_000) : nil,
+      amount: listener ? number_between(1_000, 200_000) : nil,
       currency: listener ? currency : nil,
       conference_id: i + 1
     )
   end
 end
 RegistrationType.import registration_types_arr, validates: false
+puts "Inserted #{registration_types_arr.size} RegistrationTypes."
 
 # FIX price of ticket
+# FIX registered_at does not match conference registration times
+# FIX ticket doest not match
 tickets = []
+registrations = []
 Conference.all.each do |conference|
   (conference.ticket_limit / 3).round.times do |i|
     if conference.registration_start_date
       tickets << Ticket.new(
         created_at: Faker::Time.between(conference.registration_start_date, conference.registration_end_date),
-        quantity: Faker::Number.between(1, 4),
-        price: Faker::Number.between(10000, 1_000_000),
+        quantity: number_between(1, 4),
+        price: number_between(1_000, 800_000),
         currency: currency,
         paid: high_chance ? true : false
+      )
+
+      registrations << Registration.new(
+        registered_at: Faker::Time.between(3.years.ago, 2.years.from_now),
+
+        conference_id: id(CONFERENCES),
+        user_id: id(USERS),
+        registration_type_id: id(CONFERENCES * registration_types.size),
+        ticket_id: i+1
       )
     end
   end
 end
 Ticket.import tickets, validates: false
-
-# FIX registered_at does not match conference registration times
-# FIX ticket doest not match
-TICKETS = Ticket.count
-registrations = []
-TICKETS.times do |i|
-  registrations << Registration.new(
-    registered_at: Faker::Time.between(3.years.ago, 2.years.from_now),
-
-    conference_id: id(CONFERENCES),
-    user_id: id(USERS),
-    registration_type_id: id(CONFERENCES * registration_types.size),
-    ticket_id: i+1
-  )
-end
 Registration.import registrations, validates: false
+puts "Inserted #{tickets.size} Tickets."
+puts "Inserted #{registrations.size} Registrations."
