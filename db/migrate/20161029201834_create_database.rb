@@ -51,8 +51,8 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.string :city, limit: 50, null: false
       t.string :street, limit: 50, null: false
       t.string :postal_code, limit: 10, null: false
-      t.string :latitude, limit: 20
-      t.string :longitude, limit: 20
+      t.string :latitude, limit: 25
+      t.string :longitude, limit: 25
       t.string :photo
     end
 

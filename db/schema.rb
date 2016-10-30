@@ -365,8 +365,8 @@ CREATE TABLE `venues` (
   `city` varchar(50) NOT NULL,
   `street` varchar(50) NOT NULL,
   `postal_code` varchar(10) NOT NULL,
-  `latitude` varchar(20) DEFAULT NULL,
-  `longitude` varchar(20) DEFAULT NULL,
+  `latitude` varchar(25) DEFAULT NULL,
+  `longitude` varchar(25) DEFAULT NULL,
   `photo` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -385,7 +385,7 @@ CREATE TABLE `venues` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-10-30 14:30:11
+-- Dump completed on 2016-10-30 17:33:49
 INSERT INTO schema_migrations (version) VALUES ('20161029201834');
 
 
