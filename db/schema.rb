@@ -48,7 +48,8 @@ CREATE TABLE `conferences` (
   `registration_start_date` datetime DEFAULT NULL,
   `registration_end_date` datetime DEFAULT NULL,
   `ticket_limit` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `index_conferences_on_title` (`title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -61,7 +62,9 @@ DROP TABLE IF EXISTS `conferences_topics`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `conferences_topics` (
   `conference_id` int(11) NOT NULL,
-  `topic_id` int(11) NOT NULL
+  `topic_id` int(11) NOT NULL,
+  UNIQUE KEY `index_conferences_topics_on_conference_id_and_topic_id` (`conference_id`,`topic_id`),
+  UNIQUE KEY `index_conferences_topics_on_topic_id_and_conference_id` (`topic_id`,`conference_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -150,7 +153,9 @@ DROP TABLE IF EXISTS `roles_users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `roles_users` (
   `role_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL
+  `user_id` int(11) NOT NULL,
+  UNIQUE KEY `index_roles_users_on_user_id_and_role_id` (`user_id`,`role_id`),
+  KEY `index_roles_users_on_role_id` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -258,7 +263,8 @@ CREATE TABLE `talks` (
   PRIMARY KEY (`id`),
   KEY `index_talks_on_topic_id` (`topic_id`),
   KEY `index_talks_on_room_id` (`room_id`),
-  KEY `index_talks_on_schedule_day_id` (`schedule_day_id`)
+  KEY `index_talks_on_schedule_day_id` (`schedule_day_id`),
+  KEY `index_talks_on_title` (`title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -271,7 +277,9 @@ DROP TABLE IF EXISTS `talks_users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `talks_users` (
   `talk_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL
+  `user_id` int(11) NOT NULL,
+  UNIQUE KEY `index_talks_users_on_user_id_and_talk_id` (`user_id`,`talk_id`),
+  UNIQUE KEY `index_talks_users_on_talk_id_and_user_id` (`talk_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -316,7 +324,9 @@ DROP TABLE IF EXISTS `topics_users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `topics_users` (
   `topic_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL
+  `user_id` int(11) NOT NULL,
+  UNIQUE KEY `index_topics_users_on_user_id_and_topic_id` (`user_id`,`topic_id`),
+  KEY `index_topics_users_on_topic_id` (`topic_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -345,7 +355,12 @@ CREATE TABLE `users` (
   `avatar` varchar(255) DEFAULT NULL,
   `email_public` tinyint(1) DEFAULT '1',
   `phone_public` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_users_on_email` (`email`),
+  UNIQUE KEY `index_users_on_password` (`password`),
+  UNIQUE KEY `index_users_on_confirmation_token` (`confirmation_token`),
+  UNIQUE KEY `index_users_on_password_reset_token` (`password_reset_token`),
+  KEY `index_users_on_firstname_and_lastname` (`firstname`,`lastname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -385,7 +400,7 @@ CREATE TABLE `venues` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-10-30 19:40:50
+-- Dump completed on 2016-11-02 20:20:49
 INSERT INTO schema_migrations (version) VALUES ('20161029201834');
 
 

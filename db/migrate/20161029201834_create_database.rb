@@ -21,6 +21,12 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.string :avatar
       t.boolean :email_public, default: true
       t.boolean :phone_public, default: false
+
+      t.index :email, unique: true
+      t.index :password, unique: true
+      t.index :password_reset_token, unique: true
+      t.index :confirmation_token, unique: true
+      t.index [:firstname, :lastname]
     end
 
     create_table :roles do |t|
@@ -37,6 +43,8 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.datetime :registration_start_date
       t.datetime :registration_end_date
       t.integer :ticket_limit
+
+      t.index :title
     end
 
     create_table :topics do |t|
@@ -96,6 +104,8 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.references :topic
       t.references :room
       t.references :schedule_day
+
+      t.index :title
     end
 
     create_table :reviews do |t|
@@ -133,9 +143,24 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.references :ticket
     end
 
-    create_join_table :roles, :users
-    create_join_table :talks, :users
-    create_join_table :topics, :users
-    create_join_table :conferences, :topics
+    create_join_table :roles, :users do |t|
+      t.index [:user_id, :role_id], unique: true
+      t.index [:role_id]
+    end
+
+    create_join_table :talks, :users do |t|
+      t.index [:user_id, :talk_id], unique: true
+      t.index [:talk_id, :user_id], unique: true
+    end
+
+    create_join_table :topics, :users do |t|
+      t.index [:user_id, :topic_id], unique: true
+      t.index [:topic_id]
+    end
+
+    create_join_table :conferences, :topics do |t|
+      t.index [:conference_id, :topic_id], unique: true
+      t.index [:topic_id, :conference_id], unique: true
+    end
   end
 end
