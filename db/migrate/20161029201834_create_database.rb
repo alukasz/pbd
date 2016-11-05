@@ -45,10 +45,11 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.integer :ticket_limit
 
       t.index :title
+      t.index :start_date
     end
 
     create_table :topics do |t|
-      t.integer :name, null: false
+      t.string :name, null: false
     end
 
     create_table :venues do |t|
@@ -65,7 +66,7 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
     end
 
     create_table :rooms do |t|
-      t.integer :size, null: false
+      t.integer :size, limit: 2, null: false
       t.string :number, limit: 6, null: false
 
       t.references :venue
@@ -91,6 +92,7 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.datetime :day, null: false
 
       t.references :conference
+      t.index :day
     end
 
     create_table :talks do |t|
@@ -102,7 +104,7 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.datetime :start_time
 
       t.references :topic
-      t.references :room
+      t.references :room, foreign_key: {on_delete: :cascade}
       t.references :schedule_day
 
       t.index :title
@@ -128,7 +130,7 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
 
     create_table :tickets do |t|
       t.datetime :created_at, null: false
-      t.integer :quantity, null: false, default: 1
+      t.integer :quantity, limit: 2, null: false, default: 1
       t.integer :price, null: false
       t.string :currency, limit: 3, null: false
       t.boolean :paid, null: false, default: false

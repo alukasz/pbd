@@ -49,7 +49,8 @@ CREATE TABLE `conferences` (
   `registration_end_date` datetime DEFAULT NULL,
   `ticket_limit` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `index_conferences_on_title` (`title`)
+  KEY `index_conferences_on_title` (`title`),
+  KEY `index_conferences_on_start_date` (`start_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -168,7 +169,7 @@ DROP TABLE IF EXISTS `rooms`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rooms` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `size` int(11) NOT NULL,
+  `size` smallint(6) NOT NULL,
   `number` varchar(6) NOT NULL,
   `venue_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -189,7 +190,8 @@ CREATE TABLE `schedule_days` (
   `day` datetime NOT NULL,
   `conference_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `index_schedule_days_on_conference_id` (`conference_id`)
+  KEY `index_schedule_days_on_conference_id` (`conference_id`),
+  KEY `index_schedule_days_on_day` (`day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -264,7 +266,8 @@ CREATE TABLE `talks` (
   KEY `index_talks_on_topic_id` (`topic_id`),
   KEY `index_talks_on_room_id` (`room_id`),
   KEY `index_talks_on_schedule_day_id` (`schedule_day_id`),
-  KEY `index_talks_on_title` (`title`)
+  KEY `index_talks_on_title` (`title`),
+  CONSTRAINT `fk_rails_615f9d106e` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -293,7 +296,7 @@ DROP TABLE IF EXISTS `tickets`;
 CREATE TABLE `tickets` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `created_at` datetime NOT NULL,
-  `quantity` int(11) NOT NULL DEFAULT '1',
+  `quantity` smallint(6) NOT NULL DEFAULT '1',
   `price` int(11) NOT NULL,
   `currency` varchar(3) NOT NULL,
   `paid` tinyint(1) NOT NULL DEFAULT '0',
@@ -310,7 +313,7 @@ DROP TABLE IF EXISTS `topics`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `topics` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -400,7 +403,7 @@ CREATE TABLE `venues` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-02 20:20:49
+-- Dump completed on 2016-11-05 10:50:25
 INSERT INTO schema_migrations (version) VALUES ('20161029201834');
 
 

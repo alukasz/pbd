@@ -21,4 +21,6 @@ Database for managing conferences.
   * Create database: `bundle exec rake db:create`
   * Run migrations: `bundle exec rake db:migrate`
   * Reset database: `bundle exec rake db:drop db:create db:migrate`
+  * Seed database: `bundle exec rake db:seed`
+  * All in one: `bundle exec rake db:drop db:create db:migrate db:seed`
   * Run application in [IRB](https://en.wikipedia.org/wiki/Interactive_Ruby_Shell): `bundle exec bin/console`. This will load all models, connect to the database and start IRB session. All the power of [ActiveRecord](http://guides.rubyonrails.org/active_record_querying.html).

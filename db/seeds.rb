@@ -10,7 +10,7 @@ def number_between(from, to)
   rand(from..to)
 end
 
-CONFERENCES = 555
+CONFERENCES = 10
 USERS = CONFERENCES * number_between(40, 60) + number_between(1, 100)
 ROLES = 5
 VENUES = CONFERENCES / number_between(10, 25) + number_between(1, 20)
