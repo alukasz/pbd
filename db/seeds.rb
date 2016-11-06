@@ -190,7 +190,7 @@ Conference.all.each do |conference|
         start_time: Faker::Time.between(schedule_day.day, schedule_day.day + 23.hours),
         topic_id: id(TOPICS),
         room_id: id(ROOMS),
-        schedule_day_id: schedule_day.id
+        schedule_day_id: schedule_days.size
       )
     end
   end

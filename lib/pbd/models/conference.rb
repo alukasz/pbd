@@ -3,7 +3,7 @@ class Conference < ActiveRecord::Base
   has_many :registrations
 
   has_many :sponsorships
-  has_many :sponsors, through: :sponsors
+  has_many :sponsors, through: :sponsorships
 
   has_many :schedule_days
   has_many :talks, through: :schedule_days
