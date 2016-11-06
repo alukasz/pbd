@@ -403,7 +403,7 @@ CREATE TABLE `venues` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-06 17:33:50
+-- Dump completed on 2016-11-06 17:51:02
 INSERT INTO schema_migrations (version) VALUES ('20161029201834');
 
 

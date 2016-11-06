@@ -22,6 +22,7 @@ MIN_TALKS_DAILY = 1
 MAX_TALKS_DAILY = 8
 TOPICS = number_between(30, 40)
 REVIEWS = number_between(CONFERENCES * 42, CONFERENCES * 84)
+BATCH = 1000
 
 # helper methods
 def high_chance(expression = true, other = nil)
@@ -70,7 +71,7 @@ USERS.times do |i|
     phone_public: low_chance
   )
 end
-User.import users, validates: false
+User.import users, validates: false, batch_size: BATCH
 puts "Inserted #{users.size} Users."
 
 roles = []
@@ -80,7 +81,7 @@ ROLES.times do |i|
     description: Faker::Hipster.sentence
   )
 end
-Role.import roles, validates: false
+Role.import roles, validates: false, batch_size: BATCH
 puts "Inserted #{roles.size} Roles."
 
 conferences = []
@@ -99,7 +100,7 @@ CONFERENCES.times do |i|
     ticket_limit: very_high_chance(number_between(50, 200), number_between(200, 10_000))
   )
 end
-Conference.import conferences, validates: false
+Conference.import conferences, validates: false, batch_size: BATCH
 puts "Inserted #{conferences.size} Conferences."
 
 # FIX find appropriate name for topic
@@ -109,7 +110,7 @@ TOPICS.times do |i|
     name: Faker::Superhero.power
   )
 end
-Topic.import topics, validates: false
+Topic.import topics, validates: false, batch_size: BATCH
 puts "Inserted #{topics.size} Topics."
 
 venues = []
@@ -129,7 +130,7 @@ VENUES.times do |i|
     photo: high_chance("images/avatar/venue-#{i}.jpg")
   )
 end
-Venue.import venues, validates: false
+Venue.import venues, validates: false, batch_size: BATCH
 puts "Inserted #{venues.size} Venues."
 
 rooms = []
@@ -140,7 +141,7 @@ ROOMS.times do |i|
     venue_id: id(VENUES)
   )
 end
-Room.import rooms, validates: false
+Room.import rooms, validates: false, batch_size: BATCH
 puts "Inserted #{rooms.size} Rooms."
 
 sponsors = []
@@ -152,7 +153,7 @@ SPONSORS.times do |i|
     logo: high_chance("images/sponsors/sponsor-#{i}.jpg")
   )
 end
-Sponsor.import sponsors, validates: false
+Sponsor.import sponsors, validates: false, batch_size: BATCH
 puts "Inserted #{sponsors.size} Sponsors."
 
 # FIX sponsor can support the same conference multiple times
@@ -165,7 +166,7 @@ SPONSORSHIPS.times do |i|
     conference_id: id(CONFERENCES)
   )
 end
-Sponsorship.import sponsorships, validates: false
+Sponsorship.import sponsorships, validates: false, batch_size: BATCH
 puts "Inserted #{sponsorships.size} Sponsorships."
 
 # schedule days for conference and talks for schedule day
@@ -195,8 +196,8 @@ Conference.all.each do |conference|
     end
   end
 end
-ScheduleDay.import schedule_days, validates: false
-Talk.import talks, validates: false
+ScheduleDay.import schedule_days, validates: false, batch_size: BATCH
+Talk.import talks, validates: false, batch_size: BATCH
 puts "Inserted #{schedule_days.size} ScheduleDays."
 puts "Inserted #{talks.size} Talks."
 
@@ -210,7 +211,7 @@ REVIEWS.times do |i|
     user_id: id(USERS)
   )
 end
-Review.import reviews, validates: false
+Review.import reviews, validates: false, batch_size: BATCH
 puts "Inserted #{reviews.size} Reviews."
 
 registration_types_arr = []
@@ -227,7 +228,7 @@ CONFERENCES.times do |i|
     )
   end
 end
-RegistrationType.import registration_types_arr, validates: false
+RegistrationType.import registration_types_arr, validates: false, batch_size: BATCH
 puts "Inserted #{registration_types_arr.size} RegistrationTypes."
 
 # FIX price of ticket
@@ -235,30 +236,35 @@ puts "Inserted #{registration_types_arr.size} RegistrationTypes."
 # FIX ticket doest not match
 tickets = []
 registrations = []
+counter = 0
 Conference.all.each do |conference|
   (conference.ticket_limit / 3).round.times do |i|
     if conference.registration_start_date
-      tickets << Ticket.new(
-        created_at: Faker::Time.between(conference.registration_start_date, conference.registration_end_date),
-        quantity: number_between(1, 4),
-        price: number_between(1_000, 800_000),
-        currency: currency,
-        paid: high_chance ? true : false
-      )
-
+      with_ticket = very_high_chance
+      if with_ticket
+        tickets << Ticket.new(
+          created_at: Faker::Time.between(conference.registration_start_date, conference.registration_end_date),
+          quantity: number_between(1, 4),
+          price: number_between(1_000, 800_000),
+          currency: currency,
+          paid: high_chance ? true : false
+        )
+      end
       registrations << Registration.new(
         registered_at: Faker::Time.between(3.years.ago, 2.years.from_now),
 
         conference_id: id(CONFERENCES),
         user_id: id(USERS),
         registration_type_id: id(CONFERENCES * registration_types.size),
-        ticket_id: i+1
+        ticket_id: with_ticket ? tickets.size : nil
       )
+
+
     end
   end
 end
-Ticket.import tickets, validates: false
-Registration.import registrations, validates: false
+Ticket.import tickets, validates: false, batch_size: BATCH
+Registration.import registrations, validates: false, batch_size: BATCH
 puts "Inserted #{tickets.size} Tickets."
 puts "Inserted #{registrations.size} Registrations."
 
@@ -272,7 +278,7 @@ roles_users_columns = [:role_id, :user_id]
   ]
 end
 roles_users_uniq = roles_users.uniq
-RoleUser.import roles_users_columns, roles_users_uniq, validate: false
+RoleUser.import roles_users_columns, roles_users_uniq, validate: false, batch_size: BATCH
 puts "Inserted #{roles_users_uniq.size} RoleUser."
 
 talks_users = []
@@ -293,7 +299,7 @@ TALKS.times do
   end
 end
 talks_users_uniq = talks_users.uniq
-TalkUser.import talks_users_columns, talks_users_uniq, validate: false
+TalkUser.import talks_users_columns, talks_users_uniq, validate: false, batch_size: BATCH
 puts "Inserted #{talks_users_uniq.size} TalkUser."
 
 topics_users = []
@@ -315,7 +321,7 @@ USERS.times do |user|
   end
 end
 topics_users_uniq = topics_users.uniq
-TopicUser.import topics_users_columns, topics_users_uniq, validate: false
+TopicUser.import topics_users_columns, topics_users_uniq, validate: false, batch_size: BATCH
 puts "Inserted #{topics_users_uniq.size} TopicUser."
 
 conferences_topics = []
@@ -329,5 +335,5 @@ CONFERENCES.times do |conference|
   end
 end
 conferences_topics_uniq = conferences_topics.uniq
-ConferenceTopic.import conferences_topics_columns, conferences_topics_uniq, validate: false
+ConferenceTopic.import conferences_topics_columns, conferences_topics_uniq, validate: false, batch_size: BATCH
 puts "Inserted #{conferences_topics_uniq.size} ConferenceTopic."
