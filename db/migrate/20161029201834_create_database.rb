@@ -69,7 +69,7 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.integer :size, limit: 2, null: false
       t.string :number, limit: 6, null: false
 
-      t.references :venue
+      t.references :venue, null: false
     end
 
     create_table :sponsors do |t|
@@ -83,15 +83,15 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.integer :amount, null: false
       t.string :currency, limit: 3, null: false
 
-      t.references :sponsor
-      t.references :conference
+      t.references :sponsor, null: false
+      t.references :conference, null: false
     end
 
     create_table :schedule_days do |t|
       t.boolean :public, null: false, default: true
       t.datetime :day, null: false
 
-      t.references :conference
+      t.references :conference, null: false
       t.index :day
     end
 
@@ -103,7 +103,7 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.boolean :highlighted, default: false
       t.datetime :start_time
 
-      t.references :topic
+      t.references :topic, null: false
       t.references :room, foreign_key: {on_delete: :cascade}
       t.references :schedule_day
 
@@ -114,8 +114,8 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.string :title, null: false
       t.text :content, null: false
 
-      t.references :talk
-      t.references :user
+      t.references :talk, null: false
+      t.references :user, null: false
     end
 
     create_table :registration_types do |t|
@@ -125,7 +125,7 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.integer :amount
       t.string :currency, limit: 3
 
-      t.references :conference
+      t.references :conference, null: false
     end
 
     create_table :tickets do |t|
@@ -139,9 +139,9 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
     create_table :registrations do |t|
       t.datetime :registered_at, null: false
 
-      t.references :conference
-      t.references :user
-      t.references :registration_type
+      t.references :conference, null: false
+      t.references :user, null: false
+      t.references :registration_type, null: false
       t.references :ticket
     end
 

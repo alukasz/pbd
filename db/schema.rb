@@ -83,7 +83,7 @@ CREATE TABLE `registration_types` (
   `requires_ticket` tinyint(1) DEFAULT '0',
   `amount` int(11) DEFAULT NULL,
   `currency` varchar(3) DEFAULT NULL,
-  `conference_id` int(11) DEFAULT NULL,
+  `conference_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `index_registration_types_on_conference_id` (`conference_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -99,9 +99,9 @@ DROP TABLE IF EXISTS `registrations`;
 CREATE TABLE `registrations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `registered_at` datetime NOT NULL,
-  `conference_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `registration_type_id` int(11) DEFAULT NULL,
+  `conference_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `registration_type_id` int(11) NOT NULL,
   `ticket_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_registrations_on_conference_id` (`conference_id`),
@@ -122,8 +122,8 @@ CREATE TABLE `reviews` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `content` text NOT NULL,
-  `talk_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
+  `talk_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `index_reviews_on_talk_id` (`talk_id`),
   KEY `index_reviews_on_user_id` (`user_id`)
@@ -171,7 +171,7 @@ CREATE TABLE `rooms` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `size` smallint(6) NOT NULL,
   `number` varchar(6) NOT NULL,
-  `venue_id` int(11) DEFAULT NULL,
+  `venue_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `index_rooms_on_venue_id` (`venue_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -188,7 +188,7 @@ CREATE TABLE `schedule_days` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `public` tinyint(1) NOT NULL DEFAULT '1',
   `day` datetime NOT NULL,
-  `conference_id` int(11) DEFAULT NULL,
+  `conference_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `index_schedule_days_on_conference_id` (`conference_id`),
   KEY `index_schedule_days_on_day` (`day`)
@@ -236,8 +236,8 @@ CREATE TABLE `sponsorships` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `amount` int(11) NOT NULL,
   `currency` varchar(3) NOT NULL,
-  `sponsor_id` int(11) DEFAULT NULL,
-  `conference_id` int(11) DEFAULT NULL,
+  `sponsor_id` int(11) NOT NULL,
+  `conference_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `index_sponsorships_on_sponsor_id` (`sponsor_id`),
   KEY `index_sponsorships_on_conference_id` (`conference_id`)
@@ -259,7 +259,7 @@ CREATE TABLE `talks` (
   `public` tinyint(1) DEFAULT '1',
   `highlighted` tinyint(1) DEFAULT '0',
   `start_time` datetime DEFAULT NULL,
-  `topic_id` int(11) DEFAULT NULL,
+  `topic_id` int(11) NOT NULL,
   `room_id` int(11) DEFAULT NULL,
   `schedule_day_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -403,7 +403,7 @@ CREATE TABLE `venues` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-05 10:50:25
+-- Dump completed on 2016-11-06 17:33:50
 INSERT INTO schema_migrations (version) VALUES ('20161029201834');
 
 
