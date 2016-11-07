@@ -65,7 +65,9 @@ CREATE TABLE `conferences_topics` (
   `conference_id` int(11) NOT NULL,
   `topic_id` int(11) NOT NULL,
   UNIQUE KEY `index_conferences_topics_on_conference_id_and_topic_id` (`conference_id`,`topic_id`),
-  UNIQUE KEY `index_conferences_topics_on_topic_id_and_conference_id` (`topic_id`,`conference_id`)
+  UNIQUE KEY `index_conferences_topics_on_topic_id_and_conference_id` (`topic_id`,`conference_id`),
+  CONSTRAINT `fk_rails_5ad1f6be75` FOREIGN KEY (`conference_id`) REFERENCES `conferences` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_rails_fe4ef8b429` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -102,12 +104,10 @@ CREATE TABLE `registrations` (
   `conference_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `registration_type_id` int(11) NOT NULL,
-  `ticket_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_registrations_on_conference_id` (`conference_id`),
   KEY `index_registrations_on_user_id` (`user_id`),
-  KEY `index_registrations_on_registration_type_id` (`registration_type_id`),
-  KEY `index_registrations_on_ticket_id` (`ticket_id`)
+  KEY `index_registrations_on_registration_type_id` (`registration_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -156,7 +156,9 @@ CREATE TABLE `roles_users` (
   `role_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   UNIQUE KEY `index_roles_users_on_user_id_and_role_id` (`user_id`,`role_id`),
-  KEY `index_roles_users_on_role_id` (`role_id`)
+  KEY `index_roles_users_on_role_id` (`role_id`),
+  CONSTRAINT `fk_rails_9dada905f6` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_rails_e2a7142459` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -266,8 +268,7 @@ CREATE TABLE `talks` (
   KEY `index_talks_on_topic_id` (`topic_id`),
   KEY `index_talks_on_room_id` (`room_id`),
   KEY `index_talks_on_schedule_day_id` (`schedule_day_id`),
-  KEY `index_talks_on_title` (`title`),
-  CONSTRAINT `fk_rails_615f9d106e` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE CASCADE
+  KEY `index_talks_on_title` (`title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -282,7 +283,9 @@ CREATE TABLE `talks_users` (
   `talk_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   UNIQUE KEY `index_talks_users_on_user_id_and_talk_id` (`user_id`,`talk_id`),
-  UNIQUE KEY `index_talks_users_on_talk_id_and_user_id` (`talk_id`,`user_id`)
+  UNIQUE KEY `index_talks_users_on_talk_id_and_user_id` (`talk_id`,`user_id`),
+  CONSTRAINT `fk_rails_1fff212885` FOREIGN KEY (`talk_id`) REFERENCES `talks` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_rails_7e4b8c7286` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -300,7 +303,10 @@ CREATE TABLE `tickets` (
   `price` int(11) NOT NULL,
   `currency` varchar(3) NOT NULL,
   `paid` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  `registration_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_tickets_on_registration_id` (`registration_id`),
+  CONSTRAINT `fk_rails_4c387b0123` FOREIGN KEY (`registration_id`) REFERENCES `registrations` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -329,7 +335,9 @@ CREATE TABLE `topics_users` (
   `topic_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   UNIQUE KEY `index_topics_users_on_user_id_and_topic_id` (`user_id`,`topic_id`),
-  KEY `index_topics_users_on_topic_id` (`topic_id`)
+  KEY `index_topics_users_on_topic_id` (`topic_id`),
+  CONSTRAINT `fk_rails_bf8935c15c` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_rails_ee0643ce9a` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -403,7 +411,7 @@ CREATE TABLE `venues` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-06 17:51:02
+-- Dump completed on 2016-11-07 11:31:20
 INSERT INTO schema_migrations (version) VALUES ('20161029201834');
 
 

@@ -247,7 +247,8 @@ Conference.all.each do |conference|
           quantity: number_between(1, 4),
           price: number_between(1_000, 800_000),
           currency: currency,
-          paid: high_chance ? true : false
+          paid: high_chance ? true : false,
+          registration_id: registrations.size + 1
         )
       end
       registrations << Registration.new(
@@ -255,16 +256,15 @@ Conference.all.each do |conference|
 
         conference_id: id(CONFERENCES),
         user_id: id(USERS),
-        registration_type_id: id(CONFERENCES * registration_types.size),
-        ticket_id: with_ticket ? tickets.size : nil
+        registration_type_id: id(CONFERENCES * registration_types.size)
       )
 
 
     end
   end
 end
-Ticket.import tickets, validates: false, batch_size: BATCH
 Registration.import registrations, validates: false, batch_size: BATCH
+Ticket.import tickets, validates: false, batch_size: BATCH
 puts "Inserted #{tickets.size} Tickets."
 puts "Inserted #{registrations.size} Registrations."
 

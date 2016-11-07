@@ -104,7 +104,7 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.datetime :start_time
 
       t.references :topic, null: false
-      t.references :room, foreign_key: {on_delete: :cascade}
+      t.references :room
       t.references :schedule_day
 
       t.index :title
@@ -128,41 +128,50 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.references :conference, null: false
     end
 
-    create_table :tickets do |t|
-      t.datetime :created_at, null: false
-      t.integer :quantity, limit: 2, null: false, default: 1
-      t.integer :price, null: false
-      t.string :currency, limit: 3, null: false
-      t.boolean :paid, null: false, default: false
-    end
-
     create_table :registrations do |t|
       t.datetime :registered_at, null: false
 
       t.references :conference, null: false
       t.references :user, null: false
       t.references :registration_type, null: false
-      t.references :ticket
+    end
+
+    create_table :tickets do |t|
+      t.datetime :created_at, null: false
+      t.integer :quantity, limit: 2, null: false, default: 1
+      t.integer :price, null: false
+      t.string :currency, limit: 3, null: false
+      t.boolean :paid, null: false, default: false
+
+      t.references :registration, foreign_key: {on_delete: :cascade}
     end
 
     create_join_table :roles, :users do |t|
       t.index [:user_id, :role_id], unique: true
       t.index [:role_id]
     end
+    add_foreign_key :roles_users, :users, on_delete: :cascade
+    add_foreign_key :roles_users, :roles, on_delete: :cascade
 
     create_join_table :talks, :users do |t|
       t.index [:user_id, :talk_id], unique: true
       t.index [:talk_id, :user_id], unique: true
     end
+    add_foreign_key :talks_users, :users, on_delete: :cascade
+    add_foreign_key :talks_users, :talks, on_delete: :cascade
 
     create_join_table :topics, :users do |t|
       t.index [:user_id, :topic_id], unique: true
       t.index [:topic_id]
     end
+    add_foreign_key :topics_users, :users, on_delete: :cascade
+    add_foreign_key :topics_users, :topics, on_delete: :cascade
 
     create_join_table :conferences, :topics do |t|
       t.index [:conference_id, :topic_id], unique: true
       t.index [:topic_id, :conference_id], unique: true
     end
+    add_foreign_key :conferences_topics, :conferences, on_delete: :cascade
+    add_foreign_key :conferences_topics, :topics, on_delete: :cascade
   end
 end
