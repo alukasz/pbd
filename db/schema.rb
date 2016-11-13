@@ -268,7 +268,8 @@ CREATE TABLE `talks` (
   KEY `index_talks_on_topic_id` (`topic_id`),
   KEY `index_talks_on_room_id` (`room_id`),
   KEY `index_talks_on_schedule_day_id` (`schedule_day_id`),
-  KEY `index_talks_on_title` (`title`)
+  KEY `index_talks_on_title` (`title`),
+  CONSTRAINT `fk_rails_8ef923f3db` FOREIGN KEY (`schedule_day_id`) REFERENCES `schedule_days` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -411,7 +412,7 @@ CREATE TABLE `venues` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-10 16:54:48
+-- Dump completed on 2016-11-13  8:22:29
 INSERT INTO schema_migrations (version) VALUES ('20161029201834');
 
 

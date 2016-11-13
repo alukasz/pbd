@@ -105,7 +105,7 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
 
       t.references :topic, null: false
       t.references :room
-      t.references :schedule_day
+      t.references :schedule_day, foreign_key: {on_delete: :nullify}
 
       t.index :title
     end
