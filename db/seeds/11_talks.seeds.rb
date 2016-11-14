@@ -12,6 +12,7 @@ columns = [
 
 values = []
 schedule_days = ScheduleDay.count
+topics = Topic.count
 TALKS.times do |i|
   values << [
     Faker::Educator.course,
@@ -20,7 +21,7 @@ TALKS.times do |i|
     high_chance,
     low_chance,
     Faker::Time.between(1.year.ago, Time.now),
-    id_for(TOPICS),
+    id_for(topics),
     id_for(ROOMS),
     id_for(schedule_days)
   ]

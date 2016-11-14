@@ -32,6 +32,8 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
     create_table :roles do |t|
       t.string :name, limit: 50
       t.string :description, limit: 2048
+
+      t.index :name
     end
 
     create_table :conferences do |t|
@@ -45,6 +47,7 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.integer :ticket_limit
 
       t.index :title
+      t.index [:id, :title]
       t.index :start_date
     end
 
@@ -63,13 +66,15 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.string :latitude, limit: 25
       t.string :longitude, limit: 25
       t.string :photo
+
+      t.index [:id, :country]
     end
 
     create_table :rooms do |t|
       t.integer :size, limit: 2, null: false
       t.string :number, limit: 6, null: false
 
-      t.references :venue, null: false
+      t.references :venue, null: false, foreign_key: true
     end
 
     create_table :sponsors do |t|
@@ -83,15 +88,15 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.integer :amount, null: false
       t.string :currency, limit: 3, null: false
 
-      t.references :sponsor, null: false
-      t.references :conference, null: false
+      t.references :sponsor, null: false, foreign_key: true
+      t.references :conference, null: false, foreign_key: true
     end
 
     create_table :schedule_days do |t|
       t.boolean :public, null: false, default: true
       t.datetime :day, null: false
 
-      t.references :conference, null: false
+      t.references :conference, null: false, foreign_key: true
       t.index :day
     end
 
@@ -103,8 +108,8 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.boolean :highlighted, default: false
       t.datetime :start_time
 
-      t.references :topic, null: false
-      t.references :room
+      t.references :topic, null: false, foreign_key: true
+      t.references :room, foreign_key: true
       t.references :schedule_day, foreign_key: {on_delete: :nullify}
 
       t.index :title
@@ -114,8 +119,10 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.string :title, null: false
       t.text :content, null: false
 
-      t.references :talk, null: false
-      t.references :user, null: false
+      t.references :talk, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true
+
+
     end
 
     create_table :registration_types do |t|
@@ -125,15 +132,15 @@ class CreateDatabase < ActiveRecord::Migration[5.0]
       t.integer :amount
       t.string :currency, limit: 3
 
-      t.references :conference, null: false
+      t.references :conference, null: false, foreign_key: true
     end
 
     create_table :registrations do |t|
       t.datetime :registered_at, null: false
 
-      t.references :conference, null: false
-      t.references :user, null: false
-      t.references :registration_type, null: false
+      t.references :conference, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true
+      t.references :registration_type, null: false, foreign_key: true
     end
 
     create_table :tickets do |t|

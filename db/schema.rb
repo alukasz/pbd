@@ -50,6 +50,7 @@ CREATE TABLE `conferences` (
   `ticket_limit` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_conferences_on_title` (`title`),
+  KEY `index_conferences_on_id_and_title` (`id`,`title`),
   KEY `index_conferences_on_start_date` (`start_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -87,7 +88,8 @@ CREATE TABLE `registration_types` (
   `currency` varchar(3) DEFAULT NULL,
   `conference_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `index_registration_types_on_conference_id` (`conference_id`)
+  KEY `index_registration_types_on_conference_id` (`conference_id`),
+  CONSTRAINT `fk_rails_445aa58f26` FOREIGN KEY (`conference_id`) REFERENCES `conferences` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -107,7 +109,10 @@ CREATE TABLE `registrations` (
   PRIMARY KEY (`id`),
   KEY `index_registrations_on_conference_id` (`conference_id`),
   KEY `index_registrations_on_user_id` (`user_id`),
-  KEY `index_registrations_on_registration_type_id` (`registration_type_id`)
+  KEY `index_registrations_on_registration_type_id` (`registration_type_id`),
+  CONSTRAINT `fk_rails_2e0658f554` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `fk_rails_424eade8b4` FOREIGN KEY (`registration_type_id`) REFERENCES `registration_types` (`id`),
+  CONSTRAINT `fk_rails_a7f833fc52` FOREIGN KEY (`conference_id`) REFERENCES `conferences` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -126,7 +131,9 @@ CREATE TABLE `reviews` (
   `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `index_reviews_on_talk_id` (`talk_id`),
-  KEY `index_reviews_on_user_id` (`user_id`)
+  KEY `index_reviews_on_user_id` (`user_id`),
+  CONSTRAINT `fk_rails_74a66bd6c5` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `fk_rails_e18b1839c0` FOREIGN KEY (`talk_id`) REFERENCES `talks` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -141,7 +148,8 @@ CREATE TABLE `roles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   `description` varchar(2048) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `index_roles_on_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -175,7 +183,8 @@ CREATE TABLE `rooms` (
   `number` varchar(6) NOT NULL,
   `venue_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `index_rooms_on_venue_id` (`venue_id`)
+  KEY `index_rooms_on_venue_id` (`venue_id`),
+  CONSTRAINT `fk_rails_b8c0d101d7` FOREIGN KEY (`venue_id`) REFERENCES `venues` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -193,7 +202,8 @@ CREATE TABLE `schedule_days` (
   `conference_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `index_schedule_days_on_conference_id` (`conference_id`),
-  KEY `index_schedule_days_on_day` (`day`)
+  KEY `index_schedule_days_on_day` (`day`),
+  CONSTRAINT `fk_rails_a6bb13c670` FOREIGN KEY (`conference_id`) REFERENCES `conferences` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -242,7 +252,9 @@ CREATE TABLE `sponsorships` (
   `conference_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `index_sponsorships_on_sponsor_id` (`sponsor_id`),
-  KEY `index_sponsorships_on_conference_id` (`conference_id`)
+  KEY `index_sponsorships_on_conference_id` (`conference_id`),
+  CONSTRAINT `fk_rails_90708b8f13` FOREIGN KEY (`conference_id`) REFERENCES `conferences` (`id`),
+  CONSTRAINT `fk_rails_bf78e760cb` FOREIGN KEY (`sponsor_id`) REFERENCES `sponsors` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -269,7 +281,9 @@ CREATE TABLE `talks` (
   KEY `index_talks_on_room_id` (`room_id`),
   KEY `index_talks_on_schedule_day_id` (`schedule_day_id`),
   KEY `index_talks_on_title` (`title`),
-  CONSTRAINT `fk_rails_8ef923f3db` FOREIGN KEY (`schedule_day_id`) REFERENCES `schedule_days` (`id`) ON DELETE SET NULL
+  CONSTRAINT `fk_rails_615f9d106e` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`),
+  CONSTRAINT `fk_rails_8ef923f3db` FOREIGN KEY (`schedule_day_id`) REFERENCES `schedule_days` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_rails_f7d093169f` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -395,7 +409,8 @@ CREATE TABLE `venues` (
   `latitude` varchar(25) DEFAULT NULL,
   `longitude` varchar(25) DEFAULT NULL,
   `photo` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `index_venues_on_id_and_country` (`id`,`country`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -412,7 +427,7 @@ CREATE TABLE `venues` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-13  8:22:29
+-- Dump completed on 2016-11-14 11:41:45
 INSERT INTO schema_migrations (version) VALUES ('20161029201834');
 
 
