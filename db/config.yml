@@ -4,4 +4,4 @@ development:
   database: pbd
   pool: 5
   username: root
-  password: 
+  password:

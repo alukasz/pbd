@@ -117,6 +117,29 @@ CREATE TABLE `registrations` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `review_assignments`
+--
+
+DROP TABLE IF EXISTS `review_assignments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `review_assignments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `deadline` datetime NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `talk_id` int(11) NOT NULL,
+  `review_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_review_assignments_on_user_id` (`user_id`),
+  KEY `index_review_assignments_on_talk_id` (`talk_id`),
+  KEY `index_review_assignments_on_review_id` (`review_id`),
+  CONSTRAINT `fk_rails_30a8eb723b` FOREIGN KEY (`review_id`) REFERENCES `reviews` (`id`),
+  CONSTRAINT `fk_rails_59641e625f` FOREIGN KEY (`talk_id`) REFERENCES `talks` (`id`),
+  CONSTRAINT `fk_rails_fed64aaa7d` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `reviews`
 --
 
@@ -129,6 +152,9 @@ CREATE TABLE `reviews` (
   `content` text NOT NULL,
   `talk_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `approved` tinyint(1) DEFAULT '0',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `index_reviews_on_talk_id` (`talk_id`),
   KEY `index_reviews_on_user_id` (`user_id`),
@@ -427,7 +453,7 @@ CREATE TABLE `venues` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-11-14 11:41:45
-INSERT INTO schema_migrations (version) VALUES ('20161029201834');
+-- Dump completed on 2016-12-11 14:43:32
+INSERT INTO schema_migrations (version) VALUES ('20161029201834'), ('20161211135717');
 
 
